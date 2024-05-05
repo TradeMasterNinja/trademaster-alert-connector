@@ -14,20 +14,21 @@ export const dydxV4BuildOrderParams = async (alertMessage: AlertObject) => {
             throw new Error('Failed to fetch account data.');
         }
 
-        const { account, openPositions } = accountData;    
-        const currentPosition = openPositions[market];
-
-        const currentPositionSize = currentPosition ? Math.abs(Number(currentPosition.size)) : 0;
-
         const orderSide = alertMessage.order === 'buy' ? OrderSide.BUY : OrderSide.SELL;
         const positionSide = alertMessage.position === 'long' ? 'LONG' : 'SHORT';
 		const reduceOrder = (orderSide===OrderSide.BUY && positionSide==="SHORT") || (orderSide===OrderSide.SELL && positionSide==="LONG");
-        const latestPrice = Number(alertMessage.price);
+		const { account, openPositions } = accountData;    
+        const currentPosition = openPositions[market];
+		//check if user already manually closed position
+		if (!currentPosition && reduceOrder) {
+			throw new Error('cannot reduce order. Position has already been closed.');
+		}
+        const currentPositionSize = currentPosition ? Math.abs(Number(currentPosition.size)) : 0;
+		const latestPrice = Number(alertMessage.price);
         const alertSize = alertMessage.sizeByLeverage ? Number(alertMessage.sizeByLeverage) : alertMessage.sizeUsd ? Number(alertMessage.sizeUsd) : alertMessage.size ? Number(alertMessage.size) : 0;
 		console.log("alertSize", alertSize);
 		let orderSize: number = 0;
 
-           
         // populate orderSize full current position size if alert side is in opposite direction of current open position
         if (currentPosition && currentPosition.side === "LONG" && orderSide === OrderSide.SELL && !reduceOrder) {
             orderSize = currentPositionSize;
@@ -66,8 +67,7 @@ export const dydxV4BuildOrderParams = async (alertMessage: AlertObject) => {
             price: Number(latestPrice)
         };
 
-		console.log('---openPerpPositions---\n', openPositions);
-        console.log('---currentPosition---\n', currentPosition);   
+		console.log('---openPerpPositions---\n', openPositions); 
         console.log('orderParams for dydx\n', orderParams);
         
         return orderParams;
