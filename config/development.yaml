@@ -1,0 +1,20 @@
+Dydx:
+  Network:
+    host: https://api.stage.dydx.exchange
+    chainID: 5
+  User:
+    limitFee: 0.2
+Perpetual:
+  Network:
+    host: https://mainnet.optimism.io/
+  User:
+    slippage: 0.05
+GMX:
+  Network:
+    host: http://127.0.0.1:8545
+DydxV4:
+  IndexerConfig:
+    httpsEndpoint: https://indexer.dydx.trade
+    wssEndpoint: wss://indexer.dydx.trade/v4/w
+  ValidatorConfig:
+    restEndpoint: https://dydx-mainnet-full-rpc.public.blastapi.io
