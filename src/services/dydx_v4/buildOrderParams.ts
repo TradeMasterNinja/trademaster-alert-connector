@@ -12,7 +12,7 @@ export const dydxV4BuildOrderParams = async (alertMessage: AlertObject) => {
 		(position) => position.market == market
 	);
 
-	const currentPositionSize = Number(Math.abs(currentPosition.size));
+	const currentPositionSize = currentPosition.size ? Number(Math.abs(currentPosition.size)) : 0;
 	const orderSide =
 		alertMessage.order == 'buy' ? OrderSide.BUY : OrderSide.SELL;
 	const positionSide = alertMessage.position == 'long' ? 'LONG' : 'SHORT';
@@ -31,6 +31,7 @@ export const dydxV4BuildOrderParams = async (alertMessage: AlertObject) => {
 
 
 	if (alertMessage.sizeByLeverage) {
+
 		orderSize = orderSize + (account.equity * Number(alertMessage.sizeByLeverage)) / latestPrice;
 	} else if (alertMessage.sizeUsd) {
 		orderSize = orderSize + Number(alertMessage.sizeUsd) / latestPrice;
