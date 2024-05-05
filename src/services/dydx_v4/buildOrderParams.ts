@@ -11,28 +11,25 @@ export const dydxV4BuildOrderParams = async (alertMessage: AlertObject) => {
 	const currentPosition = perpPositions.find(
 		(position) => position.market == market
 	);
+	const currentPositionSize = Number(Math.abs(currentPosition.size));
 	const orderSide =
 		alertMessage.order == 'buy' ? OrderSide.BUY : OrderSide.SELL;
 	const positionSide = alertMessage.position == 'long' ? 'LONG' : 'SHORT';
 	
 	
-	const latestPrice = alertMessage.price;
-	console.log('latestPrice', latestPrice);
-
+	const latestPrice = Number(alertMessage.price);
 	let orderSize: number = 0;
 	
 	// Add current position size if alert is in opposite direction
 	if (currentPosition && currentPosition.side == "LONG" && orderSide == OrderSide.SELL && positionSide == "SHORT"){
-		orderSize = Math.abs(currentPosition.size);
+		orderSize = currentPositionSize;
 	}
 	if (currentPosition && currentPosition.side == "SHORT" && orderSide == OrderSide.BUY && positionSide == "LONG"){
-		orderSize = Math.abs(currentPosition.size);
+		orderSize = currentPositionSize;
 	}
 
 
 	if (alertMessage.sizeByLeverage) {
-		// const { isReady, account, perpPositions, assetPositions } = await dydxV4GetAccount();
-
 		orderSize = orderSize + (account.equity * Number(alertMessage.sizeByLeverage)) / latestPrice;
 	} else if (alertMessage.sizeUsd) {
 		orderSize = orderSize + Number(alertMessage.sizeUsd) / latestPrice;
@@ -40,23 +37,25 @@ export const dydxV4BuildOrderParams = async (alertMessage: AlertObject) => {
 		alertMessage.reverse &&
 		rootData[alertMessage.strategy].isFirstOrder == 'false'
 	) {
-		orderSize = orderSize + alertMessage.size;
+		orderSize = orderSize + Number(alertMessage.size);
 	} else {
 		// probably creating a new order || order in same direction || or reduce only order
-		orderSize = currentPosition.size;
+		orderSize = Number(alertMessage.size);
 	}
 	// validate order size
-	const validSize = ( Math.abs(Number(currentPosition.size)) - Number(orderSize) ) >= 0;
-	if (!validSize && !alertMessage.reverse) {
-		orderSize = currentPosition.size;
+	const validSize = (Math.abs(currentPositionSize) - orderSize) >= 0;
+	if (validSize === false && alertMessage.reverse === false) {
+		orderSize = currentPositionSize;
 	}
-	
+
 	const orderParams: dydxV4OrderParams = {
 		market,
 		side: orderSide,
-		size: Number(orderSize),
-		price: Number(alertMessage.price)
+		size: orderSize,
+		price: latestPrice
 	};
+	console.log('latestPrice', latestPrice);
+	console.log('validSize', validSize);
 	console.log('perpPositions', perpPositions);
 	console.log('currentPosition', currentPosition);
 	console.log('orderParams for dydx', orderParams);
