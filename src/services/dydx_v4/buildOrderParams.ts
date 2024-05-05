@@ -15,9 +15,7 @@ export const dydxV4BuildOrderParams = async (alertMessage: AlertObject) => {
         }
 
         const { account, openPositions } = accountData;    
-        const currentPosition = openPositions.find(
-            (position) => position.market === market
-        );
+        const currentPosition = openPositions[market];
 
         const currentPositionSize = currentPosition ? Math.abs(Number(currentPosition.size)) : 0;
         const orderSide = alertMessage.order === 'buy' ? OrderSide.BUY : OrderSide.SELL;
