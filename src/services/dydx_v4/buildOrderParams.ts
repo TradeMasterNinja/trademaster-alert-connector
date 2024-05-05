@@ -27,7 +27,7 @@ export const dydxV4BuildOrderParams = async (alertMessage: AlertObject) => {
 		const latestPrice = Number(alertMessage.price);
         const alertSize = alertMessage.sizeByLeverage ? Number(alertMessage.sizeByLeverage) : alertMessage.sizeUsd ? Number(alertMessage.sizeUsd) : alertMessage.size ? Number(alertMessage.size) : 0;
 		console.log("alertSize", alertSize);
-		let orderSize: number = alertMessage.reverse ? currentPositionSize : 0;
+		let orderSize: number = (alertMessage.reverse && currentPosition.side !== positionSide) ? currentPositionSize : 0;
 
         // populate orderSize full current position size if alert side is in opposite direction of current open position
         if (currentPosition && currentPosition.side === "LONG" && orderSide === OrderSide.SELL && !reduceOrder) {
