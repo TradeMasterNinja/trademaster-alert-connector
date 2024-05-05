@@ -7,11 +7,11 @@ export const dydxV4GetAccount = async () => {
     const localWallet = await generateLocalWallet();
     if (!localWallet) return;
     const response = await client.account.getSubaccount(localWallet.address, 0);
-    
-    console.log(
-      "connected to dydx v4 account: " +
-        JSON.stringify(response.subaccount, null, 2)    
-    );
+    console.log("connected to dydx v4 account: " + response.subaccount.address);
+    // console.log(
+    //   "connected to dydx v4 account: " +
+    //     JSON.stringify(response.subaccount, null, 2)    
+    // );
     if (Number(response.subaccount.freeCollateral) > 0) {
       return { isReady: true, account: response.subaccount };
     } else {
