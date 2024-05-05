@@ -22,7 +22,7 @@ export const dydxV4BuildOrderParams = async (alertMessage: AlertObject) => {
         const positionSide = alertMessage.position === 'long' ? 'LONG' : 'SHORT';
 		const reduceOrder = (orderSide===OrderSide.BUY && positionSide==="SHORT") || (orderSide===OrderSide.SELL && positionSide==="LONG");
         const latestPrice = Number(alertMessage.price);
-        const alertSize = alertMessage.sizeByLeverage ? Number(alertMessage.sizeByLeverage) : alertMessage.sizeUsd ? Number(alertMessage.sizeUsd) : Number(alertMessage.size);
+        const alertSize = alertMessage.sizeByLeverage ? Number(alertMessage.sizeByLeverage) : alertMessage.sizeUsd ? Number(alertMessage.sizeUsd) : alertMessage.size ? Number(alertMessage.size) : 0;
 		let orderSize: number = 0;
 
            
@@ -45,7 +45,7 @@ export const dydxV4BuildOrderParams = async (alertMessage: AlertObject) => {
 				const sizeUsd = currentPositionSize - (alertSize / latestPrice);
 				orderSize = sizeUsd < 0 ? currentPositionSize : sizeUsd
 			} else {
-				orderSize += Number(alertMessage.sizeUsd) / latestPrice;
+				orderSize += alertSize / latestPrice;
 			}
             
         }  else {
