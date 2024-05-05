@@ -43,12 +43,8 @@ export const dydxV4GetAccount = async () => {
       console.log(error.message);
     }
     console.log(
-      "dydx v4 account: " +
-        JSON.stringify(response.subaccount, null, 2) +
-        "asset positions: " +
-        JSON.stringify(assetPositions, null, 2) +
-        "perp positions: " +
-        JSON.stringify(perpPositions, null, 2)
+      "connected to dydx v4 account: " +
+        JSON.stringify(response.subaccount, null, 2)    
     );
     if (Number(response.subaccount.freeCollateral) > 0) {
       return { isReady: true, account: response.subaccount, perpPositions: perpPositions, assetPositions: assetPositions };
