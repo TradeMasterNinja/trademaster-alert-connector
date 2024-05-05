@@ -8,8 +8,6 @@ export const dydxV4GetAccount = async () => {
     if (!localWallet) return;
     const response = await client.account.getSubaccount(localWallet.address, 0);
     const openPositions = response.subaccount.openPerpetualPositions;
-    console.log("Account Type",typeof response.subaccount);
-    console.log("openPositionsType",typeof openPositions);
     console.log(
       "connected to dydx v4 account: " +
         JSON.stringify(openPositions, null, 2)    
