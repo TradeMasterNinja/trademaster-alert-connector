@@ -55,22 +55,28 @@ export const dydxV4BuildOrderParams = async (alertMessage: AlertObject) => {
                 if (reduceOrder) {
                     const sizeUsd = ((currentPositionSize*latestPrice) * alertSize) / latestPrice;
                     newOrder.orderSize = sizeUsd >= currentPositionSize ? currentPositionSize : sizeUsd
+                    console.log("sizeByLeverage reduce order", newOrder.orderSize)
                 } else {
                     newOrder.orderSize += (account.equity * alertSize) / latestPrice;
+                    console.log("sizeByLeverage order", newOrder.orderSize)
                 }
             } else if (alertMessage.sizeUsd) {
                 if (reduceOrder) {
                     const sizeUsd = alertSize / latestPrice;
                     newOrder.orderSize = sizeUsd >= currentPositionSize ? currentPositionSize : sizeUsd
+                    console.log("sizeUSD reduce order", newOrder.orderSize)
                 } else {
                     newOrder.orderSize += alertSize / latestPrice;
+                    console.log("sizeUSD order", newOrder.orderSize)
                 }
                 
             }  else {
                 if (reduceOrder) {
                     newOrder.orderSize = alertSize >= currentPositionSize ? currentPositionSize : alertSize
+                    console.log("size reduce order", newOrder.orderSize)
                 } else {
                     newOrder.orderSize += alertSize;
+                    console.log("size order", newOrder.orderSize)
                 }
                 
             }
