@@ -13,7 +13,7 @@ export const dydxV4BuildOrderParams = async (alertMessage: AlertObject) => {
 	);
 	const orderSide =
 		alertMessage.order == 'buy' ? OrderSide.BUY : OrderSide.SELL;
-	
+	const positionSide = alertMessage.position == 'long' ? 'LONG' : 'SHORT';
 	
 	
 	const latestPrice = alertMessage.price;
@@ -22,10 +22,10 @@ export const dydxV4BuildOrderParams = async (alertMessage: AlertObject) => {
 	let orderSize: number = 0;
 	
 	// Add current position size if alert is in opposite direction
-	if (currentPosition && currentPosition.side == "LONG" && orderSide == OrderSide.SELL){
+	if (currentPosition && currentPosition.side == "LONG" && orderSide == OrderSide.SELL && positionSide == "SHORT"){
 		orderSize = Math.abs(currentPosition.size);
 	}
-	if (currentPosition && currentPosition.side == "SHORT" && orderSide == OrderSide.BUY){
+	if (currentPosition && currentPosition.side == "SHORT" && orderSide == OrderSide.BUY && positionSide == "LONG"){
 		orderSize = Math.abs(currentPosition.size);
 	}
 
@@ -42,8 +42,16 @@ export const dydxV4BuildOrderParams = async (alertMessage: AlertObject) => {
 	) {
 		orderSize = orderSize + alertMessage.size;
 	} else {
-		// probably creating a new order or order in same direction
-		orderSize = alertMessage.size;
+		// probably creating a new order || order in same direction || or reduce only order
+		const validSize = ( Math.abs(Number(currentPosition.size)) - Number(alertMessage.size) ) >= 0;
+		if (currentPosition && currentPosition.side == "LONG" && orderSide == OrderSide.SELL && positionSide == "LONG" && validSize){
+			// valid reduce only order
+			orderSize = alertMessage.size;	
+		} else {
+			// order would revers position so just close it
+			orderSize = currentPosition.size;
+		}
+		
 	}
 
 	const orderParams: dydxV4OrderParams = {
