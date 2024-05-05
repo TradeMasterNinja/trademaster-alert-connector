@@ -1,12 +1,12 @@
 import { AlertObject, dydxV4OrderParams } from '../../types';
 import 'dotenv/config';
-import { getStrategiesDB } from '../../helper';
+//import { getStrategiesDB } from '../../helper';
 import { OrderSide } from '@dydxprotocol/v4-client-js';
 import { dydxV4GetAccount } from './getAccount';
 
 export const dydxV4BuildOrderParams = async (alertMessage: AlertObject) => {
     try {
-        const [db, rootData] = getStrategiesDB();
+        //const [db, rootData] = getStrategiesDB();
         const market = alertMessage.market.replace(/_/g, '-');
         const accountData = await dydxV4GetAccount();
         
@@ -17,7 +17,8 @@ export const dydxV4BuildOrderParams = async (alertMessage: AlertObject) => {
         const { account, openPositions } = accountData;    
         const currentPosition = openPositions[market];
 
-        const currentPositionSize = currentPosition.size ? Math.abs(Number(currentPosition.size)) : 0;
+        const currentPositionSize = currentPosition ? Math.abs(Number(currentPosition.size)) : 0;
+
         const orderSide = alertMessage.order === 'buy' ? OrderSide.BUY : OrderSide.SELL;
         const positionSide = alertMessage.position === 'long' ? 'LONG' : 'SHORT';
 		const reduceOrder = (orderSide===OrderSide.BUY && positionSide==="SHORT") || (orderSide===OrderSide.SELL && positionSide==="LONG");
