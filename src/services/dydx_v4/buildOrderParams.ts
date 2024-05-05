@@ -33,7 +33,7 @@ export const dydxV4BuildOrderParams = async (alertMessage: AlertObject) => {
         const alertSize = alertMessage.sizeByLeverage ? Number(alertMessage.sizeByLeverage) : alertMessage.sizeUsd ? Number(alertMessage.sizeUsd) : alertMessage.size ? Number(alertMessage.size) : 0;
 		const latestPrice = Number(alertMessage.price)
         const newOrder = {
-            orderSize:Number((alertMessage.reverse && currentPosition.side !== positionSide) ? currentPositionSize : 0),
+            orderSize:Number((alertMessage.reverse && currentPosition && currentPosition.side !== positionSide) ? currentPositionSize : 0),
             orderSide:orderSide
         }
 
