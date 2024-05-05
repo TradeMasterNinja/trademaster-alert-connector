@@ -42,7 +42,7 @@ export const dydxV4BuildOrderParams = async (alertMessage: AlertObject) => {
 			}
         } else if (alertMessage.sizeUsd) {
 			if (reduceOrder) {
-				const sizeUsd = currentPositionSize - (alertSize) / latestPrice);
+				const sizeUsd = currentPositionSize - (alertSize / latestPrice);
 				orderSize = sizeUsd < 0 ? currentPositionSize : sizeUsd
 			} else {
 				orderSize += Number(alertMessage.sizeUsd) / latestPrice;
