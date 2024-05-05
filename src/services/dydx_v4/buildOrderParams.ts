@@ -43,17 +43,14 @@ export const dydxV4BuildOrderParams = async (alertMessage: AlertObject) => {
 		orderSize = orderSize + alertMessage.size;
 	} else {
 		// probably creating a new order || order in same direction || or reduce only order
-		const validSize = ( Math.abs(Number(currentPosition.size)) - Number(alertMessage.size) ) >= 0;
-		if (currentPosition && currentPosition.side == "LONG" && orderSide == OrderSide.SELL && positionSide == "LONG" && validSize){
-			// valid reduce only order
-			orderSize = alertMessage.size;	
-		} else {
-			// order would revers position so just close it
-			orderSize = currentPosition.size;
-		}
-		
+		orderSize = currentPosition.size;
 	}
-
+	// validate order size
+	const validSize = ( Math.abs(Number(currentPosition.size)) - Number(orderSize) ) >= 0;
+	if (!validSize && !alertMessage.reverse) {
+		orderSize = currentPosition.size;
+	}
+	
 	const orderParams: dydxV4OrderParams = {
 		market,
 		side: orderSide,
