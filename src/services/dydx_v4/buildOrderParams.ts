@@ -39,20 +39,26 @@ export const dydxV4BuildOrderParams = async (alertMessage: AlertObject) => {
         
         if (alertMessage.sizeByLeverage) {
 			if (reduceOrder) {
-				orderSize = ((currentPositionSize*latestPrice) * alertSize) / latestPrice;
+                const sizeUsd = ((currentPositionSize*latestPrice) * alertSize) / latestPrice;
+                orderSize = sizeUsd >= currentPositionSize ? currentPositionSize : sizeUsd
 			} else {
 				orderSize += (account.equity * alertSize) / latestPrice;
 			}
         } else if (alertMessage.sizeUsd) {
 			if (reduceOrder) {
 				const sizeUsd = alertSize / latestPrice;
-				orderSize = sizeUsd < 0 ? currentPositionSize : sizeUsd
+				orderSize = sizeUsd >= currentPositionSize ? currentPositionSize : sizeUsd
 			} else {
 				orderSize += alertSize / latestPrice;
 			}
             
         }  else {
-            orderSize += alertSize;
+            if (reduceOrder) {
+                orderSize = alertSize >= currentPositionSize ? currentPositionSize : alertSize
+            } else {
+                orderSize += alertSize;
+            }
+            
         }
 
 		// removed due to orderSize being populaed above so if we are going in oposite direction the orderSize is already populated
