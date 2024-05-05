@@ -17,9 +17,10 @@ export const dydxV4BuildOrderParams = async (alertMessage: AlertObject) => {
         const { account, openPositions } = accountData;    
         const currentPosition = openPositions[market];
 
-        const currentPositionSize = currentPosition ? Math.abs(Number(currentPosition.size)) : 0;
+        const currentPositionSize = currentPosition.size ? Math.abs(Number(currentPosition.size)) : 0;
         const orderSide = alertMessage.order === 'buy' ? OrderSide.BUY : OrderSide.SELL;
         const positionSide = alertMessage.position === 'long' ? 'LONG' : 'SHORT';
+		const reduceOrder = (orderSide===OrderSide.BUY && positionSide==="SHORT") || (orderSide===OrderSide.SELL && positionSide==="LONG");
         const latestPrice = Number(alertMessage.price);
         let orderSize: number = 0;
         
@@ -27,40 +28,41 @@ export const dydxV4BuildOrderParams = async (alertMessage: AlertObject) => {
         console.log('---currentPosition---', currentPosition);
         console.log('---currentPositionSize---', currentPositionSize);
         
-        // Add current position size if alert is in opposite direction
-        if (currentPosition && currentPosition.side === "LONG" && orderSide === OrderSide.SELL && positionSide === "SHORT") {
+        // populate orderSize full current position size if alert side is in opposite direction of current open position
+        if (currentPosition && currentPosition.side === "LONG" && orderSide === OrderSide.SELL && !reduceOrder) {
             orderSize = currentPositionSize;
         }
-        if (currentPosition && currentPosition.side === "SHORT" && orderSide === OrderSide.BUY && positionSide === "LONG") {
+        if (currentPosition && currentPosition.side === "SHORT" && orderSide === OrderSide.BUY && !reduceOrder) {
             orderSize = currentPositionSize;
         }
         
         if (alertMessage.sizeByLeverage) {
-            orderSize += (account.equity * Number(alertMessage.sizeByLeverage)) / latestPrice;
+			if (reduceOrder) {
+				orderSize = ((currentPositionSize*latestPrice) * Number(alertMessage.sizeByLeverage)) / latestPrice;
+			} else {
+				orderSize += (account.equity * Number(alertMessage.sizeByLeverage)) / latestPrice;
+			}
         } else if (alertMessage.sizeUsd) {
-            orderSize += Number(alertMessage.sizeUsd) / latestPrice;
+			if (reduceOrder) {
+				const sizeUsd = currentPositionSize - (Number(alertMessage.sizeUsd) / latestPrice);
+				orderSize = sizeUsd < 0 ? currentPositionSize : sizeUsd
+			} else {
+				orderSize += Number(alertMessage.sizeUsd) / latestPrice;
+			}
+            
         } else if (alertMessage.reverse && rootData[alertMessage.strategy].isFirstOrder === 'false') {
-            orderSize += Number(alertMessage.size);
+            orderSize = currentPositionSize + Number(alertMessage.size);
         } else {
-            orderSize = Number(alertMessage.size);
+            orderSize += Number(alertMessage.size);
         }
-        
-        // validate order size
-        const validSize = (Math.abs(currentPositionSize) - orderSize) >= 0;
-        
-        if (!validSize && !alertMessage.reverse) {
-            orderSize = currentPositionSize;
-        }
-        
+
         const orderParams: dydxV4OrderParams = {
             market,
             side: orderSide,
             size: Number(orderSize),
             price: Number(latestPrice)
         };
-        
-        console.log('latestPrice', latestPrice);
-        console.log('validSize', validSize);
+
         console.log('orderParams for dydx', orderParams);
         
         return orderParams;
