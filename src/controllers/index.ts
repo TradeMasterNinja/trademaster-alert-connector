@@ -5,7 +5,6 @@ import {
 	dydxBuildOrderParams,
 	dydxExportOrder,
 	validateAlert,
-	checkAfterPosition,
 	perpCreateOrder,
 	perpBuildOrderParams,
 	perpGetAccount,
@@ -63,19 +62,6 @@ router.post('/', async (req, res) => {
 
 		const exchange = req.body['exchange'].toLowerCase();
 		switch (exchange) {
-			case 'dydxv4': {
-				const orderParams = await dydxV4BuildOrderParams(req.body);
-				if (!orderParams) return;
-				orderResult = await dydxV4CreateOrder(orderParams);
-				if (!orderResult) throw Error('Order is not executed');
-				await dydxV4ExportOrder(
-					req.body['strategy'],
-					orderResult,
-					req.body['price'],
-					req.body['market']
-				);
-				break;
-			}
 			case 'perpetual': {
 				const orderParams = await perpBuildOrderParams(req.body);
 				if (!orderParams) return;
@@ -101,6 +87,19 @@ router.post('/', async (req, res) => {
 				);
 				break;
 			}
+			case 'dydxv4': {
+				const orderParams = await dydxV4BuildOrderParams(req.body);
+				if (!orderParams) return;
+				orderResult = await dydxV4CreateOrder(orderParams);
+				if (!orderResult) throw Error('Order is not executed');
+				await dydxV4ExportOrder(
+					req.body['strategy'],
+					orderResult,
+					req.body['price'],
+					req.body['market']
+				);
+				break;
+			}
 			default: {
 				const orderParams = await dydxBuildOrderParams(req.body);
 				if (!orderParams) return;
@@ -114,7 +113,6 @@ router.post('/', async (req, res) => {
 			}
 		}
 		res.send('OK');
-		// checkAfterPosition(req.body);
 	} catch (e) {
 		res.send('error');
 	}

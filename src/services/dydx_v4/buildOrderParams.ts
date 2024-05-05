@@ -21,7 +21,7 @@ export const dydxV4BuildOrderParams = async (alertMessage: AlertObject) => {
         const currentPosition = openPositions[market];
 		//check if user already manually closed position
 		if (!currentPosition && reduceOrder) {
-			throw new Error('cannot reduce order. Position has already been closed.');
+			throw new Error('cannot reduce '+market+' order. Position has already been closed or does not exist');
 		}
         const currentPositionSize = currentPosition ? Math.abs(Number(currentPosition.size)) : 0;
 		const latestPrice = Number(alertMessage.price);
