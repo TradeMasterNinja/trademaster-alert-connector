@@ -7,10 +7,11 @@ import { dydxV4GetAccount } from './getAccount';
 export const dydxV4BuildOrderParams = async (alertMessage: AlertObject) => {
 	const [db, rootData] = getStrategiesDB();
 	const market = alertMessage.market.replace(/_/g, '-');
-	const { isReady, account, perpPositions, assetPositions } = await dydxV4GetAccount();
-	const currentPosition = perpPositions.find(
+	const { isReady, account } = await dydxV4GetAccount();
+	const currentPosition = account.openPerpetualPositions.find(
 		(position) => position.market == market
 	);
+
 	const currentPositionSize = Number(Math.abs(currentPosition.size));
 	const orderSide =
 		alertMessage.order == 'buy' ? OrderSide.BUY : OrderSide.SELL;
@@ -56,7 +57,7 @@ export const dydxV4BuildOrderParams = async (alertMessage: AlertObject) => {
 	};
 	console.log('latestPrice', latestPrice);
 	console.log('validSize', validSize);
-	console.log('perpPositions', perpPositions);
+	console.log('openPerpPositions', account.openPerpetualPositions);
 	console.log('currentPosition', currentPosition);
 	console.log('orderParams for dydx', orderParams);
 	return orderParams;
