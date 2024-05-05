@@ -21,6 +21,9 @@ export const dydxV4BuildOrderParams = async (alertMessage: AlertObject) => {
 	const latestPrice = Number(alertMessage.price);
 	let orderSize: number = 0;
 	
+	console.log('---openPerpPositions---', openPositions);
+	console.log('---currentPosition---', currentPosition);
+
 	// Add current position size if alert is in opposite direction
 	if (currentPosition && currentPosition.side == "LONG" && orderSide == OrderSide.SELL && positionSide == "SHORT"){
 		orderSize = currentPositionSize;
@@ -53,13 +56,13 @@ export const dydxV4BuildOrderParams = async (alertMessage: AlertObject) => {
 	const orderParams: dydxV4OrderParams = {
 		market,
 		side: orderSide,
-		size: orderSize,
-		price: latestPrice
+		size: Number(orderSize),
+		price: Number(latestPrice)
 	};
 	console.log('latestPrice', latestPrice);
 	console.log('validSize', validSize);
-	console.log('openPerpPositions', account.openPerpetualPositions);
-	console.log('currentPosition', currentPosition);
+	//console.log('openPerpPositions', openPositions);
+	//console.log('currentPosition', currentPosition);
 	console.log('orderParams for dydx', orderParams);
 	return orderParams;
 };
