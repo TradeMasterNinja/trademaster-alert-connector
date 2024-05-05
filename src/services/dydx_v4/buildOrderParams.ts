@@ -7,8 +7,8 @@ import { dydxV4GetAccount } from './getAccount';
 export const dydxV4BuildOrderParams = async (alertMessage: AlertObject) => {
 	const [db, rootData] = getStrategiesDB();
 	const market = alertMessage.market.replace(/_/g, '-');
-	const { isReady, account } = await dydxV4GetAccount();
-	const currentPosition = account.openPerpetualPositions.find(
+	const { isReady, account, openPositions } = await dydxV4GetAccount();
+	const currentPosition = openPositions.find(
 		(position) => position.market == market
 	);
 
