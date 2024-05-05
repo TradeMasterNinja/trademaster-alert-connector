@@ -55,8 +55,10 @@ router.post('/', async (req, res) => {
 	if (!validated) {
 		return res.status(400).send('Error: Alert message is not valid');
 	}
+	// Respond with a 200 status indicating that the request was received and validated
+    res.status(200).send('Alert message is valid. Processing request...');
 
-	// send request to process order
+	// process order
 	try {
 		let orderResult;
 
@@ -116,10 +118,9 @@ router.post('/', async (req, res) => {
         //return res.status(200).send(orderResult);
     } catch (e) {
         console.error('Error processing request:', e);
-        return res.status(500).send('Error processing request');
+        //return res.status(500).send('Error processing request');
     }
-	// Respond with a 200 status indicating that the request was received and validated
-    res.status(200).send('Alert message is valid. Processing request...');
+	
 });
 
 router.get('/debug-sentry', function mainHandler(req, res) {
