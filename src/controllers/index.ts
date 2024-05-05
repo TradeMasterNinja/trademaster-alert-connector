@@ -92,12 +92,12 @@ router.post('/', async (req, res) => {
 				if (!orderParams) return;
 				orderResult = await dydxV4CreateOrder(orderParams);
 				if (!orderResult) throw Error('Order is not executed');
-				await dydxV4ExportOrder(
-					req.body['strategy'],
-					orderResult,
-					req.body['price'],
-					req.body['market']
-				);
+				// await dydxV4ExportOrder(
+				// 	req.body['strategy'],
+				// 	orderResult,
+				// 	req.body['price'],
+				// 	req.body['market']
+				// );
 				break;
 			}
 			default: {
