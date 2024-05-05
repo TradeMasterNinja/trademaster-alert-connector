@@ -63,6 +63,19 @@ router.post('/', async (req, res) => {
 
 		const exchange = req.body['exchange'].toLowerCase();
 		switch (exchange) {
+			case 'dydxv4': {
+				const orderParams = await dydxV4BuildOrderParams(req.body);
+				if (!orderParams) return;
+				orderResult = await dydxV4CreateOrder(orderParams);
+				if (!orderResult) throw Error('Order is not executed');
+				await dydxV4ExportOrder(
+					req.body['strategy'],
+					orderResult,
+					req.body['price'],
+					req.body['market']
+				);
+				break;
+			}
 			case 'perpetual': {
 				const orderParams = await perpBuildOrderParams(req.body);
 				if (!orderParams) return;
@@ -81,19 +94,6 @@ router.post('/', async (req, res) => {
 				orderResult = await gmxCreateOrder(orderParams);
 				if (!orderResult) throw Error('Order is not executed');
 				await gmxExportOrder(
-					req.body['strategy'],
-					orderResult,
-					req.body['price'],
-					req.body['market']
-				);
-				break;
-			}
-			case 'dydxv4': {
-				const orderParams = await dydxV4BuildOrderParams(req.body);
-				if (!orderParams) return;
-				orderResult = await dydxV4CreateOrder(orderParams);
-				if (!orderResult) throw Error('Order is not executed');
-				await dydxV4ExportOrder(
 					req.body['strategy'],
 					orderResult,
 					req.body['price'],
