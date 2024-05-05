@@ -23,6 +23,7 @@ export const dydxV4BuildOrderParams = async (alertMessage: AlertObject) => {
 		const reduceOrder = (orderSide===OrderSide.BUY && positionSide==="SHORT") || (orderSide===OrderSide.SELL && positionSide==="LONG");
         const latestPrice = Number(alertMessage.price);
         const alertSize = alertMessage.sizeByLeverage ? Number(alertMessage.sizeByLeverage) : alertMessage.sizeUsd ? Number(alertMessage.sizeUsd) : alertMessage.size ? Number(alertMessage.size) : 0;
+		console.log("alertSize", alertSize);
 		let orderSize: number = 0;
 
            
