@@ -22,7 +22,9 @@ export const dydxV4BuildOrderParams = async (alertMessage: AlertObject) => {
         const positionSide = alertMessage.position === 'long' ? 'LONG' : 'SHORT';
 		const reduceOrder = (orderSide===OrderSide.BUY && positionSide==="SHORT") || (orderSide===OrderSide.SELL && positionSide==="LONG");
         const latestPrice = Number(alertMessage.price);
-        let orderSize: number = 0;
+        const alertSize = alertMessage.sizeByLeverage ? Number(alertMessage.sizeByLeverage) : alertMessage.sizeUsd ? Number(alertMessage.sizeUsd) : Number(alertMessage.size);
+		let orderSize: number = 0;
+
            
         // populate orderSize full current position size if alert side is in opposite direction of current open position
         if (currentPosition && currentPosition.side === "LONG" && orderSide === OrderSide.SELL && !reduceOrder) {
@@ -34,23 +36,26 @@ export const dydxV4BuildOrderParams = async (alertMessage: AlertObject) => {
         
         if (alertMessage.sizeByLeverage) {
 			if (reduceOrder) {
-				orderSize = ((currentPositionSize*latestPrice) * Number(alertMessage.sizeByLeverage)) / latestPrice;
+				orderSize = ((currentPositionSize*latestPrice) * alertSize) / latestPrice;
 			} else {
-				orderSize += (account.equity * Number(alertMessage.sizeByLeverage)) / latestPrice;
+				orderSize += (account.equity * alertSize) / latestPrice;
 			}
         } else if (alertMessage.sizeUsd) {
 			if (reduceOrder) {
-				const sizeUsd = currentPositionSize - (Number(alertMessage.sizeUsd) / latestPrice);
+				const sizeUsd = currentPositionSize - (alertSize) / latestPrice);
 				orderSize = sizeUsd < 0 ? currentPositionSize : sizeUsd
 			} else {
 				orderSize += Number(alertMessage.sizeUsd) / latestPrice;
 			}
             
-        } else if (alertMessage.reverse && rootData[alertMessage.strategy].isFirstOrder === 'false') {
-            orderSize = currentPositionSize + Number(alertMessage.size);
-        } else {
-            orderSize += Number(alertMessage.size);
+        }  else {
+            orderSize += alertSize;
         }
+
+		// removed due to orderSize being populaed above so if we are going in oposite direction the orderSize is already populated
+		// else if (alertMessage.reverse && rootData[alertMessage.strategy].isFirstOrder === 'false') {
+        //     orderSize = currentPositionSize + alertSize;
+        // }
 
         const orderParams: dydxV4OrderParams = {
             market,
