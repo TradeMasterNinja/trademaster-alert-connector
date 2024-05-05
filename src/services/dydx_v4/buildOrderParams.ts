@@ -8,6 +8,8 @@ export const dydxV4BuildOrderParams = async (alertMessage: AlertObject) => {
 	const [db, rootData] = getStrategiesDB();
 	const market = alertMessage.market.replace(/_/g, '-');
 	const { isReady, account, openPositions } = await dydxV4GetAccount();
+	console.log("Account Type",typeof account);
+	console.log("ORDER openPositionsType",typeof openPositions);
 	const currentPosition = openPositions.find(
 		(position) => position.market == market
 	);
@@ -23,7 +25,7 @@ export const dydxV4BuildOrderParams = async (alertMessage: AlertObject) => {
 	
 	console.log('---openPerpPositions---', openPositions);
 	console.log('---currentPosition---', currentPosition);
-
+	console.log('---currentPositionSize---', currentPositionSize);
 	// Add current position size if alert is in opposite direction
 	if (currentPosition && currentPosition.side == "LONG" && orderSide == OrderSide.SELL && positionSide == "SHORT"){
 		orderSize = currentPositionSize;

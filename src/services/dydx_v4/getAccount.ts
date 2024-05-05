@@ -7,14 +7,17 @@ export const dydxV4GetAccount = async () => {
     const localWallet = await generateLocalWallet();
     if (!localWallet) return;
     const response = await client.account.getSubaccount(localWallet.address, 0);
+    const openPositions = response.subaccount.openPerpetualPositions;
+    console.log("Account Type",typeof response.subaccount);
+    console.log("openPositionsType",typeof openPositions);
     console.log(
       "connected to dydx v4 account: " +
-        JSON.stringify(response.subaccount.openPerpetualPositions, null, 2)    
+        JSON.stringify(openPositions, null, 2)    
     );
     if (Number(response.subaccount.freeCollateral) > 0) {
-      return { isReady: true, account: response.subaccount, openPositions: response.subaccount.openPerpetualPositions};
+      return { isReady: true, account: response.subaccount, openPositions: openPositions};
     } else {
-      return { isReady: false, account: null };
+      return { isReady: false, account: null, openPositions: null };
     }
   } catch (error) {
     console.log(error);
