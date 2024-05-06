@@ -67,29 +67,29 @@ export const validateAlert = async (
 	}
 
 	// check market if exchange is dydx
-	if (!alertMessage.exchange || alertMessage.exchange == 'dydx') {
-		const market = Market[alertMessage.market as keyof typeof Market];
-		if (!market) {
-			console.error('Market field of tradingview alert is not correct.');
-			return false;
-		}
+	// if (!alertMessage.exchange || alertMessage.exchange == 'dydx') {
+	// 	const market = Market[alertMessage.market as keyof typeof Market];
+	// 	if (!market) {
+	// 		console.error('Market field of tradingview alert is not correct.');
+	// 		return false;
+	// 	}
 
-		const connector = await DYDXConnector.build();
+	// 	const connector = await DYDXConnector.build();
 
-		const markets = await connector.client.public.getMarkets(market);
-		// console.log('markets', markets);
+	// 	const markets = await connector.client.public.getMarkets(market);
+	// 	// console.log('markets', markets);
 
-		const minOrderSize = parseFloat(markets.markets[market].minOrderSize);
+	// 	const minOrderSize = parseFloat(markets.markets[market].minOrderSize);
 
-		// check order size is greater than mininum order size
-		if (alertMessage.size && alertMessage.size < minOrderSize) {
-			console.error(
-				'Order size of this strategy must be greater than mininum order size:',
-				minOrderSize
-			);
-			return false;
-		}
-	}
+	// 	// check order size is greater than mininum order size
+	// 	if (alertMessage.size && alertMessage.size < minOrderSize) {
+	// 		console.error(
+	// 			'Order size of this strategy must be greater than mininum order size:',
+	// 			minOrderSize
+	// 		);
+	// 		return false;
+	// 	}
+	// }
 
 	const [db, rootData] = getStrategiesDB();
 	console.log('strategyData', rootData[alertMessage.strategy]);
@@ -104,15 +104,15 @@ export const validateAlert = async (
 		db.push(isFirstOrderPath, 'true');
 	}
 
-	if (
-		alertMessage.position == 'flat' &&
-		rootData[alertMessage.strategy].isFirstOrder == 'true'
-	) {
-		console.log(
-			'this alert is first and close order, so does not create a new order.'
-		);
-		return false;
-	}
+	// if (
+	// 	alertMessage.position == 'flat' &&
+	// 	rootData[alertMessage.strategy].isFirstOrder == 'true'
+	// ) {
+	// 	console.log(
+	// 		'this alert is first and close order, so does not create a new order.'
+	// 	);
+	// 	return false;
+	// }
 
 	return true;
 };
