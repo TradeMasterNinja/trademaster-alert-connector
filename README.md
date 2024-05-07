@@ -1,7 +1,7 @@
 # TradeMaster Tradingview-Alert-Connector
 `this code is based off of the tradingview-alert-connector https://github.com/junta/tradingview-alert-connector`
 # Docs
-please follow the run on cloud guide 
+follow the run on cloud guide 
 https://tv-connector.gitbook.io/docs/setup/run-on-cloud-service
 
 # Prerequisites
