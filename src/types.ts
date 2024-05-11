@@ -8,6 +8,7 @@ import { PositionSide } from '@perp/sdk-curie';
 import { gmxOrderType } from './services/gmx/constants';
 import { OrderSide as v4OrderSide } from '@dydxprotocol/v4-client-js';
 
+type TRDM_Alert = "LIMIT ONLY" | "MARKET ONLY" | "LIMIT THEN MARKET" | "MARKET CLOSE" | "MARKET REDUCE"
 export type AlertObject = {
 	exchange: string;
 	strategy: string;
@@ -21,6 +22,9 @@ export type AlertObject = {
 	reverse: boolean;
 	passphrase?: string;
 	collateral?: string;
+	trdmAlert: TRDM_Alert;
+	limitOrderSeconds?: number;
+	limitOrderAttempts?: number;	
 };
 
 export type dydxOrderParams = {
@@ -40,6 +44,9 @@ export type dydxV4OrderParams = {
 	side: v4OrderSide;
 	size: number;
 	price: number;
+	trdmAlert: TRDM_Alert;
+	limitOrderSeconds?: number;
+	limitOrderAttempts?: number;
 };
 
 export type perpOrderParams = {

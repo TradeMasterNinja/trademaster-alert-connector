@@ -6,19 +6,13 @@
 	"main": "index.js",
 	"scripts": {
 		"start": "tsc && NODE_ENV=production node dist/index.js",
-		"start:test": "tsc && NODE_ENV=test ts-node dist/index.js",
-		"start:dev": "tsc && NODE_ENV=development tsc-watch --onSuccess \"ts-node dist/index.js\"",
-		"decode": "ts-node scripts/decode.ts",
-		"test": "jest",
-		"test:prod": "NODE_ENV=production jest",
-		"ngrok": "ngrok http 3000",
-		"ngrok:docker": "ngrok http 80"
+		"start:testnet": "tsc && NODE_ENV=development node dist/index.js"
 	},
 	"author": "0xIbuki",
 	"license": "MIT",
 	"dependencies": {
 		"@dydxprotocol/v3-client": "^1.14.0",
-		"@dydxprotocol/v4-client-js": "^1.0.27",
+		"@dydxprotocol/v4-client-js": "^1.1.10",
 		"@perp/sdk-curie": "^1.22.0",
 		"@sentry/integrations": "^6.19.1",
 		"@sentry/node": "^6.18.2",

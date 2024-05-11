@@ -86,7 +86,10 @@ export const dydxV4BuildOrderParams = async (alertMessage: AlertObject) => {
             market,
             side: newOrder.orderSide,
             size: Number(newOrder.orderSize),
-            price: Number(latestPrice)
+            price: Number(latestPrice),
+            trdmAlert: alertMessage.trdmAlert,
+            ...(alertMessage.limitOrderSeconds && { limitOrderSeconds: alertMessage.limitOrderSeconds }),
+            ...(alertMessage.limitOrderAttempts && { limitOrderAttempts: alertMessage.limitOrderAttempts })
         };
 
 		console.log('---openPerpPositions---\n', openPositions); 
