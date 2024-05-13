@@ -220,7 +220,7 @@ export const dydxV4CreateOrder = async (orderParams: dydxV4OrderParams) => {
 				orderType,
 				totalFilled : orderSize,
 				remainingOrderSize : 0,
-				txOrders : [tx]
+				txOrders : [marketTX]
 			};
 		} catch (error) {
 			console.log(error.message);
