@@ -195,12 +195,14 @@ export const dydxV4CreateOrder = async (orderParams: dydxV4OrderParams) => {
 				price,
 				orderSize,
 				generateRandomInt32(),
-				OrderTimeInForce.FOK,
-				30000,
+				OrderTimeInForce.GTT,
+				120000,
 				OrderExecution.DEFAULT,
 				false,
 				reduceOnly
 			);
+
+			_sleep(5000)
 	
 			return {
 				orderType,
@@ -373,4 +375,3 @@ export const OrderFilledInfo = async (
         throw error;
     }
 };
-
