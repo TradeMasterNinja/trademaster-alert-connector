@@ -185,16 +185,19 @@ export const dydxV4CreateOrder = async (orderParams: dydxV4OrderParams) => {
 		const orderType = "MARKET ORDER"
 		try {
 			const book = await clientIndexer.markets.getPerpetualMarketOrderbook(market);
-			const price = side === OrderSide.BUY ? book.asks[1].price : book.bids[1].price;
+			const slippagePercentage = 0.05;
+			const price = side === OrderSide.BUY ? Number(book.asks[1].price) * (1 + slippagePercentage) : Number(book.bids[1].price) * (1 - slippagePercentage);
+			const clientId = generateRandomInt32();
+			
 			console.log('--- NEW MARKET ORDER: ---', side+' Price: ', price, 'Order Size: ', orderSize, 'Reduce Only: ',reduceOnly);
-			const tx = await client.placeOrder(
+			const marketTX = await client.placeOrder(
 				subaccount,
 				market,
 				OrderType.MARKET,
 				side,
 				price,
 				orderSize,
-				generateRandomInt32(),
+				clientId,
 				OrderTimeInForce.GTT,
 				120000,
 				OrderExecution.DEFAULT,
@@ -203,6 +206,15 @@ export const dydxV4CreateOrder = async (orderParams: dydxV4OrderParams) => {
 			);
 
 			_sleep(5000)
+
+			// TODO
+			if(marketTX){			
+				console.log(marketTX)	
+			} else {
+				console.log('!!!!MARKET ORDER UNDEFINED')
+			}
+			//-------
+			
 	
 			return {
 				orderType,
@@ -264,6 +276,8 @@ export const dydxV4CreateOrder = async (orderParams: dydxV4OrderParams) => {
 		}
 		const isReduce = orderParams.trdmAlert === "MARKET REDUCE";
 		const attemptMarketOrder = await doMarketOrder(size, isReduce);
+		//TODO get recent fills and check if market order was properly filled
+	
 		res.push(attemptMarketOrder);
 	}
 
