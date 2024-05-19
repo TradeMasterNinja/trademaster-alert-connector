@@ -1,7 +1,4 @@
 import { AlertObject } from '../types';
-import { Market } from '@dydxprotocol/v3-client';
-import DYDXConnector from './dydx/client';
-import { getStrategiesDB } from '../helper';
 
 export const validateAlert = async (
 	alertMessage: AlertObject
@@ -91,18 +88,18 @@ export const validateAlert = async (
 	// 	}
 	// }
 
-	const [db, rootData] = getStrategiesDB();
-	console.log('strategyData', rootData[alertMessage.strategy]);
+	// const [db, rootData] = getStrategiesDB();
+	// console.log('strategyData', rootData[alertMessage.strategy]);
 
-	const rootPath = '/' + alertMessage.strategy;
+	// const rootPath = '/' + alertMessage.strategy;
 
-	if (!rootData[alertMessage.strategy]) {
-		const reversePath = rootPath + '/reverse';
-		db.push(reversePath, alertMessage.reverse);
+	// if (!rootData[alertMessage.strategy]) {
+	// 	const reversePath = rootPath + '/reverse';
+	// 	db.push(reversePath, alertMessage.reverse);
 
-		const isFirstOrderPath = rootPath + '/isFirstOrder';
-		db.push(isFirstOrderPath, 'true');
-	}
+	// 	const isFirstOrderPath = rootPath + '/isFirstOrder';
+	// 	db.push(isFirstOrderPath, 'true');
+	// }
 
 	// if (
 	// 	alertMessage.position == 'flat' &&

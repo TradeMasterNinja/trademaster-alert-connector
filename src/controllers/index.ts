@@ -1,22 +1,10 @@
 import express, { Router } from 'express';
 import {
-	dydxCreateOrder,
-	dydxGetAccount,
-	dydxBuildOrderParams,
-	dydxExportOrder,
 	validateAlert,
-	perpCreateOrder,
-	perpBuildOrderParams,
-	perpGetAccount,
-	perpExportOrder,
 	dydxV4CreateOrder
 } from '../services';
-import { gmxBuildOrderParams } from '../services/gmx/buildOrderParams';
-import { gmxCreateOrder } from '../services/gmx/createOrder';
-import { gmxGetAccount } from '../services/gmx/getAccount';
-import { gmxExportOrder } from '../services/gmx/exportOrder';
 import { dydxV4BuildOrderParams } from '../services/dydx_v4/buildOrderParams';
-import { dydxV4ExportOrder } from '../services/dydx_v4/exportOrder';
+//import { dydxV4ExportOrder } from '../services/dydx_v4/exportOrder';
 import { dydxV4GetAccount } from '../services/dydx_v4/getAccount';
 
 const router: Router = express.Router();
@@ -24,26 +12,14 @@ const router: Router = express.Router();
 router.get('/', async (req, res) => {
 	console.log('Recieved GET request.');
 
-	const [dydxAccount, perpAccount, gmxAccount, dydxV4Account] =
-		await Promise.all([
-			dydxGetAccount(),
-			perpGetAccount(),
-			gmxGetAccount(),
-			dydxV4GetAccount()
-		]);
+	const dydxV4Account = await dydxV4GetAccount();
 
-	if (!dydxAccount && !perpAccount && !gmxAccount && !dydxV4Account) {
+	if (!dydxV4Account) {
 		res.send('Error on getting account data');
 	} else {
 		const message =
-			'dYdX v3 Account Ready:' +
-			dydxAccount +
-			', \n  dYdX v4 Account Ready:' +
-			dydxV4Account?.isReady +
-			', \n   Perpetual Protocol Account Ready:' +
-			perpAccount +
-			', \n   GMX Account Ready:' +
-			gmxAccount;
+			'dYdX v4 Account Ready:' +
+			dydxV4Account?.isReady
 		res.send(message);
 	}
 });
@@ -64,31 +40,6 @@ router.post('/', async (req, res) => {
 
 		const exchange = req.body['exchange'].toLowerCase();
 		switch (exchange) {
-			case 'perpetual': {
-				const orderParams = await perpBuildOrderParams(req.body);
-				if (!orderParams) return;
-				orderResult = await perpCreateOrder(orderParams);
-				await perpExportOrder(
-					req.body['strategy'],
-					orderResult,
-					req.body['price'],
-					req.body['market']
-				);
-				break;
-			}
-			case 'gmx': {
-				const orderParams = await gmxBuildOrderParams(req.body);
-				if (!orderParams) return;
-				orderResult = await gmxCreateOrder(orderParams);
-				if (!orderResult) throw Error('Order is not executed');
-				await gmxExportOrder(
-					req.body['strategy'],
-					orderResult,
-					req.body['price'],
-					req.body['market']
-				);
-				break;
-			}
 			case 'dydxv4': {
 				const orderParams = await dydxV4BuildOrderParams(req.body);
 				if (!orderParams) return;
@@ -103,15 +54,16 @@ router.post('/', async (req, res) => {
 				break;
 			}
 			default: {
-				const orderParams = await dydxBuildOrderParams(req.body);
+				const orderParams = await dydxV4BuildOrderParams(req.body);
 				if (!orderParams) return;
-				orderResult = await dydxCreateOrder(orderParams);
+				orderResult = await dydxV4CreateOrder(orderParams);
 				if (!orderResult) throw Error('Order is not executed');
-				await dydxExportOrder(
-					req.body['strategy'],
-					orderResult.order,
-					req.body['price']
-				);
+				// await dydxV4ExportOrder(
+				// 	req.body['strategy'],
+				// 	orderResult,
+				// 	req.body['price'],
+				// 	req.body['market']
+				// );
 			}
 		}
 		// Respond with orderResult

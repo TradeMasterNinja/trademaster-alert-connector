@@ -1,12 +1,4 @@
-import {
-	OrderSide,
-	OrderType,
-	TimeInForce,
-	Market
-} from '@dydxprotocol/v3-client';
-import { PositionSide } from '@perp/sdk-curie';
-import { gmxOrderType } from './services/gmx/constants';
-import { OrderSide as v4OrderSide } from '@dydxprotocol/v4-client-js';
+import { OrderSide } from '@dydxprotocol/v4-client-js';
 
 type TRDM_Alert = "LIMIT ONLY" | "MARKET ONLY" | "LIMIT THEN MARKET" | "MARKET CLOSE" | "MARKET REDUCE"
 export type AlertObject = {
@@ -27,53 +19,12 @@ export type AlertObject = {
 	limitOrderAttempts?: number;	
 };
 
-export type dydxOrderParams = {
-	market: Market;
-	side: OrderSide;
-	type: OrderType.MARKET;
-	timeInForce: TimeInForce.FOK;
-	postOnly: false;
-	size: string;
-	price: string;
-	limitFee: string;
-	expiration: string;
-};
-
 export type dydxV4OrderParams = {
 	market: string;
-	side: v4OrderSide;
+	side: OrderSide;
 	size: number;
 	price: number;
 	trdmAlert: TRDM_Alert;
 	limitOrderSeconds?: number;
 	limitOrderAttempts?: number;
-};
-
-export type perpOrderParams = {
-	tickerSymbol: string;
-	side: PositionSide;
-	amountInput: number;
-	isAmountInputBase: boolean;
-	referralCode: string;
-};
-
-export type gmxOrderParams = {
-	marketAddress: string;
-	isLong: boolean;
-	sizeUsd: number;
-	price: number;
-	collateral?: string;
-};
-
-export type gmxOrderResult = {
-	txHash: string;
-	sizeUsd: number;
-	isLong: boolean;
-};
-
-export type GmxPositionResponse = {
-	orderType: gmxOrderType;
-	hasLongPosition?: boolean;
-	positionSizeUsd?: number;
-	collateralAmount?: number;
 };

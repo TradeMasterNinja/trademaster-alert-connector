@@ -17,7 +17,7 @@ export const dydxV4BuildOrderParams = async (alertMessage: AlertObject) => {
         const positionSide = alertMessage.position === 'long' ? 'LONG' : alertMessage.position === 'short' ? 'SHORT' : 'FLAT';
 		const { account, openPositions } = accountData;    
         const currentPosition = openPositions[market];
-        const orderSide = alertMessage.order === 'buy' ? OrderSide.BUY : OrderSide.SELL;
+        const orderSide : OrderSide = alertMessage.order === 'buy' ? OrderSide.BUY : OrderSide.SELL;
         const reduceOrder = (orderSide===OrderSide.BUY && positionSide==="SHORT") || (orderSide===OrderSide.SELL && positionSide==="LONG");
 		
 		//check if user already manually closed position

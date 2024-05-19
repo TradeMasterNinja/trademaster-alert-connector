@@ -11,5 +11,7 @@ declare namespace NodeJS {
 		readonly PERPETUAL_PRIVATE_KEY: string;
 		readonly GMX_PRIVATE_KEY: string;
 		readonly GMX_LEVERAGE: string;
+		readonly MARKET_ORDER_FILL_TIMEOUT: number;
+		readonly MARKET_ORDER_MAX_RETRIES: number;
 	}
 }

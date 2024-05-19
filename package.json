@@ -1,14 +1,14 @@
 {
-	"name": "tradingview-alert-connector",
+	"name": "trademaster-tradingview-alert-connector",
 	"version": "1.0.0",
-	"description": "Free and self-hosted tool for you to Integrate TradingView strategy alert and execute automated trading for dYdX.",
+	"description": "Free and self-hosted tool for you to Integrate TradeMaster.Ninja TradingView backtester strategy alerts and execute automated trading for dYdX.",
 	"homepage": "https://tv-connector.gitbook.io/docs/",
 	"main": "index.js",
 	"scripts": {
 		"start": "tsc && NODE_ENV=production node dist/index.js",
 		"start:testnet": "tsc && NODE_ENV=development node dist/index.js"
 	},
-	"author": "0xIbuki",
+	"author": "TradeMasterNinja",
 	"license": "MIT",
 	"dependencies": {
 		"@dydxprotocol/v3-client": "^1.14.0",
