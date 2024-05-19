@@ -60,7 +60,7 @@ export const dydxV4CreateOrder = async (orderParams: dydxV4OrderParams) => {
 				try {
 					//const postOnly = true //orderParams.postOnly ?? false;
 					const price = side === OrderSide.BUY ? book.bids[withinSpread ? 1 : 0].price : book.asks[withinSpread ? 1 : 0].price;
-					console.log('--- NEW LIMIT ORDER: ---', side+' Limit Price: ', price, 'Order Size: ', remainingOrderSize, 'Reduce Only: ',reduceOnly);
+					console.log('--- NEW LIMIT ORDER: ---', side+' Limit Price: ', price, 'Order Size: ', remainingOrderSize);
 					if (isShortTerm) {
 						// place a short term order
 						tx = await client.placeShortTermOrder(
@@ -72,7 +72,7 @@ export const dydxV4CreateOrder = async (orderParams: dydxV4OrderParams) => {
 							clientId,
 							goodUntilBlock,
 							OrderTimeInForce.GTT,
-							reduceOnly,
+							false,
 						);
 					} else {
 						// place a long term order
@@ -214,7 +214,7 @@ export const dydxV4CreateOrder = async (orderParams: dydxV4OrderParams) => {
 			if (totalFilled <= size) {
 				// place a market order		
 				try {
-					console.log('--- NEW MARKET ORDER: ---', side+' Market Price: ', price, 'Order Size: ', remainingOrderSize, 'Reduce Only: ',reduceOnly);
+					console.log('--- NEW MARKET ORDER: ---', side+' Market Price: ', price, 'Order Size: ', remainingOrderSize);
 					// place a short term order
 					tx = await client.placeShortTermOrder(
 						subaccount,
@@ -225,7 +225,7 @@ export const dydxV4CreateOrder = async (orderParams: dydxV4OrderParams) => {
 						clientId,
 						goodUntilBlock,
 						OrderTimeInForce.GTT,
-						reduceOnly,
+						false,
 					);
 					console.log('**Market Order Placed**','Waiting for order to be filled...',fillWaitTime,'OpenBlock: ',openBlock,'GoodUntilBlock: ',goodUntilBlock);
 				} catch (error) {
@@ -349,6 +349,7 @@ export const dydxV4CreateOrder = async (orderParams: dydxV4OrderParams) => {
 		} else {
 			console.log('MARKET ONLY Order received.')
 		}
+		// TODO - isReduce not used yet
 		const isReduce = orderParams.trdmAlert === "MARKET REDUCE";
 		const attemptMarketOrder = await doMarketOrder(amountFilled,remaining, isReduce);
 		res.push(attemptMarketOrder);
@@ -356,7 +357,7 @@ export const dydxV4CreateOrder = async (orderParams: dydxV4OrderParams) => {
 
 	if (orderParams.trdmAlert === "MARKET CLOSE") {
 		console.log('MARKET CLOSE Order received.')
-		const attemptMarketOrder = await doMarketOrder(amountFilled,remaining, true);
+		const attemptMarketOrder = await doMarketOrder(amountFilled,remaining);
 		res.push(attemptMarketOrder);
 	}
 
